@@ -1,13 +1,13 @@
 <?php
 /*
-Plugin Name: Bazz CallBack Widget
+Plugin Name: Callback Widget – Bazz CallBack
 Plugin URI: http://viktor-web.ru
 Text Domain: bazz-callback-widget
 Domain Path: /languages
 Description: This plugin makes a simple widget for callback on your website.
 Author: Viktor Ievlev
-Version: 3.23
-Author URI: http://viktor-web.ru
+Version: 3.24
+Author URI: https://viktor-web.ru
 License: GPLv2
 */
 /*
@@ -231,15 +231,15 @@ function bazz_layout() { ?>
         <div class="bazz-widget-form">
             <div class="bazz-widget-form-top">
                 <label>
-				
+
                     <?php $you_hyperlink =  '<a href="javascript:void(0);" class="bazz-widget-your-name">' . esc_html__( 'you', 'bazz-callback-widget' ) . '</a>'; ?>
-					
+
 					<?php if ( $bazz_options_arr['time'] == 0 ) { ?>
-					
+
 						<?php echo( sprintf( esc_html__( 'We will call %s back in the near future!', 'bazz-callback-widget' ), $you_hyperlink ) ); ?>
-						
+
 					<?php } else { ?>
-											
+
 						<?php
 							if ( (int) $bazz_options_arr['time'] < 10 ) {
 								$time_option = '0' . $bazz_options_arr['time'];
@@ -247,12 +247,12 @@ function bazz_layout() { ?>
 								$time_option = $bazz_options_arr['time'];
 							}
 						?>
-						
+
 						<?php $time_option = '00:<span class="bazz_time">' . $time_option . '</span>'; ?>
 						<?php echo( sprintf( esc_html__( 'We will call %s back in %s seconds!', 'bazz-callback-widget' ), $you_hyperlink, $time_option ) ); ?>
-						
+
 					<?php } ?>
-					
+
                 </label>
                 <input type="text" value="" name="bazz-widget-check" id="bazz-widget-check" hidden/>
                 <?php wp_nonce_field( 'bazz_widget_nonce','bazz-widget-nonce', true ); ?>
@@ -278,11 +278,11 @@ function bazz_layout() { ?>
 $plugin_file = plugin_basename( __FILE__ );
 add_filter( "plugin_action_links_$plugin_file", 'plugin_settings_link' );
 function plugin_settings_link( $links ) {
-	$settings_links = array( 
+	$settings_links = array(
 		'<a href="options-general.php?page=bazz_menu">' . __( 'Settings', 'bazz-callback-widget' ) . '</a>',
 		'<a href="https://codecanyon.net/item/bazz-callback-widget-pro/19946676" target="_blank" style="color:#a00">PRO version</a>'
 	);
-	
+
 	foreach( $settings_links as $settings_link ) {
 		array_unshift( $links, $settings_link );
 	}
@@ -366,11 +366,11 @@ function bazz_menu_page() { ?>
             <label>
 				<?php $from_time = '<strong>' . esc_attr( $bazz_options['work_time_start'] ) . '</strong>'; ?>
 				<?php $to_time   = '<strong>' . esc_attr( $bazz_options['work_time_end'] ) . '</strong>'; ?>
-				<?php echo( sprintf( esc_html__( 'The working day with %s h to %s h', 'bazz-callback-widget' ), $from_time, $to_time ) ); ?>				
-			</label>			
+				<?php echo( sprintf( esc_html__( 'The working day with %s h to %s h', 'bazz-callback-widget' ), $from_time, $to_time ) ); ?>
+			</label>
 			<br>
             <em>
-				<?php _e( '*The time zone is using WordPress settings.', 'bazz-callback-widget' ); ?> 
+				<?php _e( '*The time zone is using WordPress settings.', 'bazz-callback-widget' ); ?>
 				<?php echo ( sprintf( esc_html__( 'For now is %s', 'bazz-callback-widget' ), current_time( 'H:i', 0 ) ) ); ?>
 			</em>
         </div>

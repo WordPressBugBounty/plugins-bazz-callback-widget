@@ -1,19 +1,20 @@
 === Bazz CallBack widget ===
 Contributors: glomberg
 Donate link: https://www.paypal.me/bazzcallback
-Tags: bazz, callback, call, call back, call request 
+Tags: callback widget, call back, request callback, lead generation, contact form
 Requires at least: 3.0.1
-Tested up to: 6.2
-Stable tag: 3.23
+Tested up to: 7.0
+Stable tag: 3.24
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-This plugin makes a simple widget for callback on your website.
+Simple callback widget for WordPress. Receive customer phone numbers by email. Easy setup – just install and activate.
 
 == Description ==
 
-The plugin is intended for easy creating a widget on your website.
-The widget will be performing "call-back function". That is, you will be recieving client's phone which the client will have specified in the widget by your e-mail.
+Looking for a simple callback widget for your WordPress site? Bazz CallBack allows visitors to request a callback by entering their phone number.
+You receive the details instantly by email. No complex setup – just install and activate.
+Perfect for service businesses, landing pages, and small websites that need a lightweight call back form.
 
 Features:
 * RTL ready
@@ -104,7 +105,7 @@ document.addEventListener( 'bazzSuccessSubmit', function( event ) {
 
 = 3.14 - 17 January 2018 =
 * Added Spanish (Mexico) language (thanks to Ruben Lara)
-* Added Swedish language (thanks to Alfons Passgård) 
+* Added Swedish language (thanks to Alfons Passgård)
 
 = 3.13 - 17 January 2018 =
 * Minor fixes.
