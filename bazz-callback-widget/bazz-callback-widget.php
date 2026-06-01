@@ -6,7 +6,7 @@ Text Domain: bazz-callback-widget
 Domain Path: /languages
 Description: This plugin makes a simple widget for callback on your website.
 Author: Viktor Ievlev
-Version: 3.24
+Version: 3.25
 Author URI: https://viktor-web.ru
 License: GPLv2
 */
@@ -34,7 +34,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 //current version constant
-define( 'BAZZ_WIDGET_VERSION', '3.19' );
+define( 'BAZZ_WIDGET_VERSION', '3.25' );
 
 //activation hook
 register_activation_hook( __FILE__, 'bazz_install' );
@@ -77,7 +77,7 @@ function bazz_new_option( $option_name, $option_value ) {
 
 add_action( 'init', 'bazz_widget_add_new_options' );
 function bazz_widget_add_new_options() {
-	/*Добавляем сюда новые опции*/
+	/* Add here new options */
 
 	//Added in 2.2
 	bazz_new_option( 'in_russia', '1' );
@@ -118,7 +118,7 @@ function bazz_widget_scripts() {
 	);
 	$bazz_options = get_option( 'bazz_options' );
 	$locale = get_locale();
-	if( 'ru_RU' == $locale ) {
+	if( 'ru_RU' === $locale ) {
 		$current_lang = 'RU';
 	} else {
 		$current_lang = 'EN';
@@ -220,7 +220,21 @@ function bazz_layout() { ?>
 		.bazz-widget-form input {
 			text-align: right;
 		}
-		<?php endif; ?>
+        <?php endif; ?>
+
+        @media only screen and (max-width: 575px) {
+            .bazz-widget {
+                bottom: -10px;
+            <?php echo( $bazz_options_arr['left_right'] ); ?>: -10px;
+            <?php echo $other_side; ?>: auto !important;
+            }
+
+            .bazz-widget.opened {
+                bottom: 0;
+            <?php echo( $bazz_options_arr['left_right'] ); ?>: 0;
+            <?php echo $other_side; ?>: auto !important;
+            }
+        }
     </style>
     <div class="bazz-widget">
         <div class="bazz-widget-button">

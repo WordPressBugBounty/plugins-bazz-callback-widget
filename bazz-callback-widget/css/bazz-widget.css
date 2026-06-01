@@ -160,7 +160,7 @@
 	    -moz-transform-style: preserve-3d;
 	    -ms-transform-style: preserve-3d;
 	    -o-transform-style: preserve-3d;
-	    transform-style: preserve-3d; 
+	    transform-style: preserve-3d;
 	}
 		.bazz-widget.opened .bazz-widget-button,
 		.bazz-widget.opened .bazz-widget-inner-circle,
@@ -241,7 +241,7 @@
 		margin-top: -65px;
 	}
 	.bazz-widget-form-bottom {
-		
+
 	}
 		.bazz-widget-form-bottom label {
 			width: 45%;
@@ -250,7 +250,7 @@
 		.bazz-widget-form-bottom input {
 			width: 40%;
 			vertical-align: middle;
-			padding: 0 6px !important; 
+			padding: 0 6px !important;
 			background: transparent !important;
 			border: 1px solid #FFFFFF;
 		}
@@ -283,7 +283,28 @@
 			color: #666 !important;
 		}
 @media only screen and (max-width : 575px) {
-	.bazz-widget {
-		display: none;
+	.bazz-widget.opened {
+		width: 100%;
+		height: auto;
+		min-height: 65px;
+	}
+	.bazz-widget-close {
+		left: 0;
+		top: -15px;
+	}
+	.bazz-widget-form {
+		height: 130px;
+	}
+	.bazz-widget-form > div {
+		-ms-flex-wrap: wrap;
+		flex-wrap: wrap;
+	}
+	.bazz-widget-form > div > label:first-child {
+		width: 100% !important;
+		-ms-flex: none;
+		flex: none;
+	}
+	.bazz-widget-form input {
+		width: 45% !important;
 	}
 }
