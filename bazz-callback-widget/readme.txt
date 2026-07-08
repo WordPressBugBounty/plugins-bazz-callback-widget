@@ -4,7 +4,7 @@ Donate link: https://www.paypal.me/bazzcallback
 Tags: callback widget, call back, request callback, lead generation, contact form
 Requires at least: 3.0.1
 Tested up to: 7.0
-Stable tag: 3.25
+Stable tag: 4.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -16,7 +16,7 @@ Looking for a simple callback widget for your WordPress site? Bazz CallBack allo
 You receive the details instantly by email. No complex setup – just install and activate.
 Perfect for service businesses, landing pages, and small websites that need a lightweight call back form.
 
-Spoiler: Messengers support for collect leads will be implemented soon (firstly for Telegram).
+Messengers support for collect leads has been implemented - firstly for Telegram (beta testing feature).
 
 Features:
 * RTL ready
@@ -69,6 +69,12 @@ document.addEventListener( 'bazzSuccessSubmit', function( event ) {
 2. Configuration here
 
 == Changelog ==
+
+= 4.0 - July 08, 2026 =
+* New. Telegram messenger integration testing.
+
+= 3.26 - June, 2, 2026 =
+* Upd. Mobile adaptive updated.
 
 = 3.25 - June, 1, 2026 =
 * New. Adaptive support added.

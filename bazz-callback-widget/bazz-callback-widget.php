@@ -6,7 +6,7 @@ Text Domain: bazz-callback-widget
 Domain Path: /languages
 Description: This plugin makes a simple widget for callback on your website.
 Author: Viktor Ievlev
-Version: 3.25
+Version: 4.0
 Author URI: https://viktor-web.ru
 License: GPLv2
 */
@@ -34,7 +34,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 //current version constant
-define( 'BAZZ_WIDGET_VERSION', '3.25' );
+define( 'BAZZ_WIDGET_VERSION', '4.0' );
+
+define('BAZZ_LEAD_CENTER_API_URL', 'https://bazz-callback-bot.twc1.net/?action=forward');
+define('BAZZ_LEAD_CENTER_TG_BOT', 'bazzCallBackBot');
 
 //activation hook
 register_activation_hook( __FILE__, 'bazz_install' );
@@ -78,6 +81,9 @@ function bazz_new_option( $option_name, $option_value ) {
 add_action( 'init', 'bazz_widget_add_new_options' );
 function bazz_widget_add_new_options() {
 	/* Add here new options */
+
+    //Added in 3.26
+    bazz_new_option('api_key', '');
 
 	//Added in 2.2
 	bazz_new_option( 'in_russia', '1' );
@@ -168,6 +174,7 @@ function bazz_widget_send() {
 	$message = __( 'Phone', 'bazz-callback-widget' ) . " - $phone\n" .
 	           __( 'Name', 'bazz-callback-widget' ) . " - $name\n" .
                __( 'From page', 'bazz-callback-widget' ) . " - " . $blog_url . $callback_page;
+    do_action('bazz_pre_send_email', $phone, $name, $blog_url . $callback_page);
 	$send    = wp_mail( $to, $subject, $message, $headers );
 	if ( $send ) {
 		wp_send_json_success( '<div style="color: #FFFFFF; font-size: 18px; line-height: 1.2; padding-top: 13px;">' . $text . '</div>' );
@@ -293,8 +300,7 @@ $plugin_file = plugin_basename( __FILE__ );
 add_filter( "plugin_action_links_$plugin_file", 'plugin_settings_link' );
 function plugin_settings_link( $links ) {
 	$settings_links = array(
-		'<a href="options-general.php?page=bazz_menu">' . __( 'Settings', 'bazz-callback-widget' ) . '</a>',
-		'<a href="https://codecanyon.net/item/bazz-callback-widget-pro/19946676" target="_blank" style="color:#a00">PRO version</a>'
+		'<a href="options-general.php?page=bazz_menu">' . __( 'Settings', 'bazz-callback-widget' ) . '</a>'
 	);
 
 	foreach( $settings_links as $settings_link ) {
@@ -345,6 +351,38 @@ function bazz_menu_page() { ?>
                                                                                                   name="bazz_options[email]"
                                                                                                   value="<?php echo esc_attr( $bazz_options['email'] ); ?>"/></label>
         </div>
+        <div class="option-telegram">
+            <label for="bazz_options[send_telegram]">
+                <?php
+                _e( 'To send the message to Telegram messenger', 'bazz-callback-widget' ); ?>
+                <input type="checkbox" name="bazz_options[send_telegram]" id="bazz_options[send_telegram]" value="1" <?php if ( isset( $bazz_options['send_telegram'] ) && $bazz_options['send_telegram'] == 1 ) {
+                    echo( 'checked' );
+                } ?>
+            </label>
+            <i>This function is in beta version</i>
+            <div class="telegram_details">
+                <label for=""><?php _e( 'API key:', 'bazz-callback-widget' ); ?>
+                    <input type="text" name="bazz_options[api_key]" value="<?php echo esc_attr( $bazz_options['api_key'] ?? '' ); ?>"/>
+                </label>
+            <?php if (empty($bazz_options['api_key'])) { ?>
+                <a href="<?php echo bazz_get_connect_url(); ?>" target="_blank"><?php _e('Connect Telegram', 'bazz-callback-widget'); ?></a>
+            <?php }?>
+            </div>
+        </div>
+        <script>
+            jQuery(document).ready(function($) {
+                var $checkbox = $('input[name="bazz_options[send_telegram]"]');
+                var $details = $('.telegram_details');
+
+                // Функция которая показывает/скрывает в зависимости от состояния
+                function toggleDetails() {
+                    $details.toggle($checkbox.is(':checked'));
+                }
+
+                toggleDetails(); // применяем текущее состояние
+                $checkbox.on('change', toggleDetails);
+            });
+        </script>
         <div class="option-work-time">
             <input type="text" id="work-time-start" name="bazz_options[work_time_start]"
                    value="<?php echo esc_attr( $bazz_options['work_time_start'] ); ?>"/>
@@ -415,6 +453,8 @@ function bazz_menu_page() { ?>
 				} ?>><?php _e( 'No', 'bazz-callback-widget' ); ?></option>
             </select>
         </div>
+		<?php else : ?>
+            <input type="hidden" name="bazz_options[in_russia]" value="0" />
 		<?php endif; ?>
         <div class="option-bottom">
             <label for=""><?php _e( 'Distance from the window bottom', 'bazz-callback-widget' ); ?>
@@ -438,4 +478,91 @@ function bazz_menu_page() { ?>
     </form>
 <?php }
 
-?>
+// Call API site verification during api-key saving
+add_action('update_option_bazz_options', 'bazz_update_options', 10, 2);
+function bazz_update_options($old_value, $new_value) {
+    if (
+            isset($old_value['api_key'], $new_value['api_key']) &&
+            empty($old_value['api_key']) &&
+            ! empty($new_value['api_key'])
+    ) {
+        $site_id = bazz_generate_site_id();
+        $api_key = $new_value['api_key'];
+        $api_url = apply_filters('bazz_lead_center_api_url', BAZZ_LEAD_CENTER_API_URL);
+        $request_data = [
+                'timeout' => 10,
+                'headers' => [
+                        'Origin' => home_url(),
+                        'Content-Type' => 'application/json'
+                ],
+                'body' => json_encode([
+                        'api_key' => $api_key,
+                        'site_id' => $site_id,
+                        'site_url' => get_site_url(),
+                        'site_name' => get_bloginfo('name'),
+                        'verify' => 1
+                ]),
+                'sslverify' => (defined('WP_ENVIRONMENT_TYPE') && WP_ENVIRONMENT_TYPE === 'development') ? false : true
+        ];
+        $response = wp_remote_post($api_url, $request_data);
+
+        $body = json_decode(wp_remote_retrieve_body($response), true);
+    }
+}
+
+// В functions.php или в основном файле плагина
+add_action('bazz_pre_send_email', 'bazz_send_telegram_lead');
+
+function bazz_send_telegram_lead() {
+    $bazz_options = get_option( 'bazz_options' );
+    $send_telegram = $bazz_options['send_telegram'] ?? '';
+    $api_key = $bazz_options['api_key'] ?? '';
+    $site_id = bazz_generate_site_id();
+    $api_url = apply_filters('bazz_lead_center_api_url', BAZZ_LEAD_CENTER_API_URL);
+
+    if ( $send_telegram && $api_key ) {
+        $request_data = [
+            'timeout' => 10,
+            'headers' => [
+                    'Origin' => home_url(),
+                    'Content-Type' => 'application/json'
+            ],
+            'body' => json_encode([
+                    'api_key' => $api_key,
+                    'site_id' => $site_id,
+                    'lead' => [
+                            'name' => sanitize_text_field($_POST['name']),
+                            'phone' => sanitize_text_field($_POST['phone']),
+                    ]
+            ]),
+            'sslverify' => (defined('WP_ENVIRONMENT_TYPE') && WP_ENVIRONMENT_TYPE === 'development') ? false : true
+        ];
+        $response = wp_remote_post($api_url, $request_data);
+
+        $body = json_decode(wp_remote_retrieve_body($response), true);
+        // Log response here
+    }
+}
+
+function bazz_get_connect_url() {
+    $botUsername = apply_filters('bazz_lead_center_tg_bot', BAZZ_LEAD_CENTER_TG_BOT);
+
+    $siteId = bazz_generate_site_id();
+
+    return "https://t.me/{$botUsername}?start=site_{$siteId}";
+}
+
+function bazz_generate_site_id() {
+    // Собираем уникальные и доступные данные для генерации ID
+    $siteUrl = get_site_url();
+    $siteName = get_bloginfo('name');
+    $adminEmail = get_option('admin_email');
+    $secretKey = '';
+
+    // Формируем уникальный идентификатор сайта
+    $siteData = $siteUrl . '|' . $siteName . '|' . $adminEmail;
+    $siteHash = hash_hmac('sha256', $siteData, $secretKey);
+
+    // Берем первые 16 символов для краткости (можно и полный хеш)
+    return substr($siteHash, 0, 16);
+}

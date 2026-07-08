@@ -59,7 +59,7 @@
 		}
 		.bazz-widget-form label {
 			display: inline-block;
-			width: 32%;
+			max-width: 40%;
 			color: #FFFFFF;
 			text-align: left;
 			vertical-align: middle;
@@ -229,19 +229,28 @@
 	}
 	.bazz-widget-form-top,
 	.bazz-widget-form-bottom {
-		width: 100%;
-		height: 65px;
 		display: flex;
-		justify-content: center;
 		align-items: center;
-		transition: margin 0.3s ease-in-out;
-		position: relative;
+		justify-content: space-between;
+		width: 100%;
+		height: 100%;
+		position: absolute;
+		top: 0;
+		left: 0;
+		padding: 0 30px;
+		-webkit-backface-visibility: hidden;
+		backface-visibility: hidden;
+		transform-style: preserve-3d;
+		transition: transform 0.5s cubic-bezier(0.39, 0.575, 0.565, 1), margin 0.3s ease-in-out;
 	}
+	/* Opening bottom part of the form */
+	.bazz-widget-form-top,
+	.bazz-widget-form-top.overflow + .bazz-widget-form-bottom {
+		transform: rotateX( 0deg )
+	}
+	.bazz-widget-form-bottom,
 	.bazz-widget-form-top.overflow {
-		margin-top: -65px;
-	}
-	.bazz-widget-form-bottom {
-
+		transform: rotateX( 180deg );
 	}
 		.bazz-widget-form-bottom label {
 			width: 45%;
